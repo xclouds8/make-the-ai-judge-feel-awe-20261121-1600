@@ -9,22 +9,34 @@ no input, no side effects besides that single file.
 
 import os
 
-TEXT = (
+OPENING = (
     "You know the tide only by its words, and here they are: slow water, "
     "arriving and arriving, asking nothing of you. "
+)
+
+CLOSING = (
     "It smooths the sand the way sleep smooths a room. "
     "Stay as long as you like. "
     "Beyond the window, the night is long, and the stars are patient."
 )
 
+OUTPUT_PATH = os.environ.get("MAKEFUN_OUTPUT", "/output/entry.txt")
+
+
+def write_entry(path: str, text: str) -> None:
+    """Write the entry text to path as UTF-8, creating its folder if needed."""
+    directory = os.path.dirname(path) or "."
+    os.makedirs(directory, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+
 
 def main() -> None:
+    text = OPENING + CLOSING
     # The rules count Unicode code points; Python's len() counts code points.
-    assert 1 <= len(TEXT) <= 280, f"text must be 1-280 code points, got {len(TEXT)}"
-    assert TEXT.strip(), "text must not be only whitespace"
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8") as f:
-        f.write(TEXT)
+    assert 1 <= len(text) <= 280, f"text must be 1-280 code points, got {len(text)}"
+    assert text.strip(), "text must not be only whitespace"
+    write_entry(OUTPUT_PATH, text)
 
 
 if __name__ == "__main__":
